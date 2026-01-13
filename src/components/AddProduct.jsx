@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 export default function AddProduct() {
-  const [formData, setFormData] = useState({ title: '', description: '', image_url: '' });
+  const [formData, setFormData] = useState({ title: '', price: '', image_url: '' }); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -13,6 +13,10 @@ export default function AddProduct() {
   };
 
   const validateForm = () => {
+    if (isNaN(formData.price) || Number(formData.price) <= 0) {
+      setError('Please enter a valid price');
+      return false;
+    }
     if (!formData.image_url.match(/^(http|https):\/\/[^\s$.?#].[^\s]*$/)) {
       setError('Please enter a valid URL');
       return false;
@@ -32,7 +36,7 @@ export default function AddProduct() {
     try {
       const response = await axios.post('http://localhost:3000/products', formData);
       setSuccess(response.data.message);
-      setFormData({ title: '', description: '', image_url: '' }); // Reset form
+      setFormData({ title: '', price: '', image_url: '' }); 
     } catch (err) {
       console.error('Error adding product:', err.message);
       setError('Failed to add product. Please try again.');
@@ -54,9 +58,9 @@ export default function AddProduct() {
       </div>
       <div>
         <input
-          name="description"
-          placeholder="Description"
-          value={formData.description}
+          name="price"
+          placeholder="Price"
+          value={formData.price}
           onChange={handleChange}
           required
         />
